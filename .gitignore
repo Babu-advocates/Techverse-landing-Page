@@ -41,3 +41,8 @@ next-env.d.ts
 
 # temp / artifacts
 .taste-skill
+
+# private resume storage
+storage/resumes/*
+!storage/resumes/.gitkeep
+

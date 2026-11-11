@@ -32,12 +32,14 @@ export const dataNav: NavGroup = {
 export const simpleNav: NavLink[] = [
   { label: 'Industries', href: '/industries' },
   { label: 'About Us', href: '/about' },
+  { label: 'Careers', href: '/careers' },
   { label: 'Contact Us', href: '/contact' },
 ];
 
 export const footerQuickLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'About Us', href: '/about' },
+  { label: 'Careers', href: '/careers' },
   { label: 'Industries', href: '/industries' },
   { label: 'Contact Us', href: '/contact' },
 ];
