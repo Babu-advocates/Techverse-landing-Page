@@ -1,0 +1,35 @@
+{
+ "note": "Credits for the photographs in this folder: photos.mjs credits prints the footer block for the ones the pages use.",
+ "photos": [
+  {
+   "file": "photo-f84970238-1280.jpg",
+   "files": [
+    "photo-f84970238-500.jpg",
+    "photo-f84970238-960.jpg",
+    "photo-f84970238-1280.jpg"
+   ],
+   "id": "f84970238",
+   "alt": "Interior of The SCO Group offices Florham Park NJ December 2008",
+   "by": "Jonathan Schilling",
+   "licence": "CC BY-SA 4.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Interior_of_The_SCO_Group_offices_Florham_Park_NJ_December_2008.jpg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f31043870.jpg",
+   "files": [
+    "photo-f31043870-500.jpg",
+    "photo-f31043870-960.jpg",
+    "photo-f31043870.jpg"
+   ],
+   "id": "f31043870",
+   "alt": "14-02-07-straszburg-RalfR-09",
+   "by": "Ralf Roletschek",
+   "licence": "CC BY 3.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:14-02-07-straszburg-RalfR-09.jpg",
+   "source": "Wikimedia Commons"
+  }
+ ]
+}

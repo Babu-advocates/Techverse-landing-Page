@@ -1,0 +1,34 @@
+{
+ "note": "Credits for the photographs in this folder: photos.mjs credits prints the footer block for the ones the pages use.",
+ "photos": [
+  {
+   "file": "photo-f71442664-1280.jpg",
+   "files": [
+    "photo-f71442664-500.jpg",
+    "photo-f71442664-960.jpg",
+    "photo-f71442664-1280.jpg"
+   ],
+   "id": "f71442664",
+   "alt": "Green Hills",
+   "by": "Alexandre Patrier",
+   "licence": "CC BY 3.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Green_Hills_(229046475).jpeg",
+   "source": "Wikimedia Commons"
+  },
+  {
+   "file": "photo-f75815729-960.jpg",
+   "files": [
+    "photo-f75815729-500.jpg",
+    "photo-f75815729-960.jpg"
+   ],
+   "id": "f75815729",
+   "alt": "Dsc",
+   "by": "Daniel Läubli",
+   "licence": "CC BY 3.0",
+   "licenceUrl": "https://creativecommons.org/licenses/by/3.0",
+   "page": "https://commons.wikimedia.org/wiki/File:Green_hills_of_Kamchatka_with_cloud_(179253499).jpg",
+   "source": "Wikimedia Commons"
+  }
+ ]
+}
