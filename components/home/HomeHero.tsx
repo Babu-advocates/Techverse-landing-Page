@@ -6,18 +6,16 @@ export default function HomeHero() {
     <section className="hero" data-enter aria-labelledby="hero-brand">
       <img
         className="hero__bg"
-        src="/images/hero-landscape.jpg"
-        srcSet="/images/hero/assets/img/photo-f71442664-500.jpg 500w, /images/hero/assets/img/photo-f71442664-960.jpg 960w, /images/hero-landscape.jpg 1280w"
+        src="/images/office-collaboration.jpg"
         sizes="100vw"
-        width={1280}
-        height={853}
-        alt=""
+        width={1920}
+        height={1080}
+        alt="Techverse engineers and architects collaborating at modern office workstations"
         fetchPriority="high"
         decoding="async"
-        data-source="stand-in"
-        data-subject="landscape"
+        data-subject="office-collaboration"
       />
-      <div className="hero__veil" aria-hidden="true" />
+      <div className="hero__veil hero__veil--technical" aria-hidden="true" />
       <div className="hero__content">
         <p id="hero-brand" className="hero__brand">
           {SITE.name}
