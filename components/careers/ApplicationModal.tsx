@@ -48,6 +48,18 @@ export default function ApplicationModal({ isOpen, onClose, jobId, jobTitle }: P
   const [experienceRange, setExperienceRange] = useState('');
   const [resumeFile, setResumeFile] = useState<File | null>(null);
 
+  // Lock background scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // Close on Escape
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
