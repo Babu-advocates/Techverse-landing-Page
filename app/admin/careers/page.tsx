@@ -34,7 +34,11 @@ export default function AdminCareersOverview() {
           fetch('/api/admin/careers/applications?limit=6'),
         ]);
 
-        if (metricsRes.ok) setMetrics(await metricsRes.json());
+        if (metricsRes.ok) {
+          const mData = await metricsRes.json();
+          // API returns { ok, metrics } — unwrap so cards read publishedJobs / draftJobs / etc.
+          setMetrics(mData.metrics ?? mData);
+        }
         if (jobsRes.ok) {
           const jData = await jobsRes.json();
           setJobs(jData.jobs || []);

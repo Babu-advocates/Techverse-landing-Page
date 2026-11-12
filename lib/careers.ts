@@ -385,13 +385,14 @@ export async function submitApplication(data: ApplicationInput): Promise<{
 // ----------------------------------------------------------------------------
 
 export async function getRecruitmentMetrics() {
-  const [jobStats, appStats, monthStats] = await Promise.all([
+  const [jobStats, appStats, monthStats, interviewStats] = await Promise.all([
     query(`
       SELECT 
         COUNT(*) as total_jobs,
-        COUNT(*) FILTER (WHERE status = 'PUBLISHED' AND deleted_at IS NULL AND (application_deadline IS NULL OR application_deadline >= CURRENT_DATE)) as active_jobs,
-        COUNT(*) FILTER (WHERE status = 'DRAFT' AND deleted_at IS NULL) as draft_jobs,
-        COUNT(*) FILTER (WHERE status = 'CLOSED' OR (application_deadline < CURRENT_DATE AND deleted_at IS NULL)) as closed_jobs
+        COUNT(*) FILTER (WHERE status = 'PUBLISHED') as published_jobs,
+        COUNT(*) FILTER (WHERE status = 'PUBLISHED' AND (application_deadline IS NULL OR application_deadline >= CURRENT_DATE)) as active_jobs,
+        COUNT(*) FILTER (WHERE status = 'DRAFT') as draft_jobs,
+        COUNT(*) FILTER (WHERE status = 'CLOSED' OR (application_deadline < CURRENT_DATE)) as closed_jobs
       FROM jobs
       WHERE deleted_at IS NULL
     `),
@@ -409,10 +410,17 @@ export async function getRecruitmentMetrics() {
       FROM job_applications
       WHERE created_at >= date_trunc('month', CURRENT_DATE)
     `),
+    query(`
+      SELECT COUNT(*) as scheduled_interviews
+      FROM interviews
+      WHERE interview_date >= CURRENT_DATE
+        AND result IN ('PENDING', 'RESCHEDULED')
+    `),
   ]);
 
   return {
     totalJobs: Number(jobStats[0]?.total_jobs || 0),
+    publishedJobs: Number(jobStats[0]?.published_jobs || 0),
     activeJobs: Number(jobStats[0]?.active_jobs || 0),
     draftJobs: Number(jobStats[0]?.draft_jobs || 0),
     closedJobs: Number(jobStats[0]?.closed_jobs || 0),
@@ -421,7 +429,9 @@ export async function getRecruitmentMetrics() {
     shortlisted: Number(appStats[0]?.shortlisted || 0),
     interviewing: Number(appStats[0]?.interviewing || 0),
     selected: Number(appStats[0]?.selected || 0),
+    thisMonthApplications: Number(monthStats[0]?.this_month || 0),
     applicationsThisMonth: Number(monthStats[0]?.this_month || 0),
+    scheduledInterviews: Number(interviewStats[0]?.scheduled_interviews || 0),
   };
 }
 

@@ -7,14 +7,15 @@ export default function AboutTeaser() {
       <div className="wrap about-split">
         <div className="about-split__media">
           <img
-            src="/images/section-hills.jpg"
-            alt=""
+            src="/images/tech-architecture.jpg"
+            alt="Modern technical software architecture and AI data workstation"
             width={960}
             height={585}
             loading="lazy"
             decoding="async"
-            data-source="stand-in"
-            data-subject="landscape"
+            data-source="production"
+            data-subject="technical-architecture"
+            style={{ objectFit: 'cover', borderRadius: 'var(--r-lg)' }}
           />
         </div>
         <div className="about-split__text">
