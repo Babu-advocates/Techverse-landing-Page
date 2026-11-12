@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -18,9 +19,12 @@ declare global {
 }
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    if (isAdmin) return;
     gsap.registerPlugin(ScrollTrigger);
 
     const tickListeners = new Set<TickListener>();
@@ -62,7 +66,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       window.__techverseLenisTick = undefined;
       lenis.destroy();
     };
-  }, []);
+  }, [isAdmin]);
 
   return <>{children}</>;
 }

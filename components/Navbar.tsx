@@ -8,6 +8,8 @@ import { softwareNav, dataNav, simpleNav, SITE } from '@/content';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const isAdmin = pathname?.startsWith('/admin');
+
   const isHome = pathname === '/';
   const [open, setOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(false);
@@ -18,10 +20,12 @@ export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    if (isAdmin) return;
     setSolid(!isHome);
-  }, [isHome]);
+  }, [isHome, isAdmin]);
 
   useEffect(() => {
+    if (isAdmin) return;
     const onScroll = () => {
       const y = window.scrollY || 0;
       if (isHome) setSolid(y > 40);
@@ -32,9 +36,10 @@ export default function Navbar() {
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, [isHome]);
+  }, [isHome, isAdmin]);
 
   useEffect(() => {
+    if (isAdmin) return;
     const onDoc = (e: MouseEvent) => {
       if (!navRef.current?.contains(e.target as Node)) {
         setSoftOpen(false);
@@ -43,14 +48,19 @@ export default function Navbar() {
     };
     document.addEventListener('mousedown', onDoc);
     return () => document.removeEventListener('mousedown', onDoc);
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
+    if (isAdmin) return;
     document.body.style.overflow = open || dockOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [open, dockOpen]);
+  }, [open, dockOpen, isAdmin]);
+
+  if (isAdmin) {
+    return null;
+  }
 
   const closeAll = () => {
     setOpen(false);
