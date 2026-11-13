@@ -11,16 +11,12 @@ export default function Navbar() {
   const isAdmin = pathname?.startsWith('/admin');
 
   const isHome = pathname === '/';
-  const [open, setOpen] = useState(false);
-  const [dockOpen, setDockOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [solid, setSolid] = useState(!isHome);
   const [softOpen, setSoftOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const progressRingRef = useRef<SVGCircleElement>(null);
-  const progressWrapRef = useRef<HTMLDivElement>(null);
   const solidRef = useRef(!isHome);
-  const lastProgressRef = useRef(-1);
 
   useEffect(() => {
     if (isAdmin) return;
@@ -31,7 +27,6 @@ export default function Navbar() {
   useEffect(() => {
     if (isAdmin) return;
     let raf = 0;
-    const CIRC = 88;
 
     const apply = () => {
       raf = 0;
@@ -40,22 +35,6 @@ export default function Navbar() {
       if (nextSolid !== solidRef.current) {
         solidRef.current = nextSolid;
         setSolid(nextSolid);
-      }
-
-      const doc = document.documentElement;
-      const max = Math.max(1, doc.scrollHeight - window.innerHeight);
-      const progress = Math.min(100, Math.round((y / max) * 100));
-      if (progress === lastProgressRef.current) return;
-      lastProgressRef.current = progress;
-
-      // Update dock ring via DOM — avoid React re-render every scroll frame (causes stack shake)
-      if (progressRingRef.current) {
-        progressRingRef.current.setAttribute('stroke-dashoffset', String(CIRC - (CIRC * progress) / 100));
-      }
-      if (progressWrapRef.current) {
-        progressWrapRef.current.setAttribute('aria-valuenow', String(progress));
-        progressWrapRef.current.setAttribute('aria-label', `Scroll progress: ${progress}%`);
-        progressWrapRef.current.title = `Scroll progress: ${progress}%`;
       }
     };
 
@@ -78,6 +57,7 @@ export default function Navbar() {
       if (!navRef.current?.contains(e.target as Node)) {
         setSoftOpen(false);
         setDataOpen(false);
+        setMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', onDoc);
@@ -86,267 +66,173 @@ export default function Navbar() {
 
   useEffect(() => {
     if (isAdmin) return;
-    document.body.style.overflow = open || dockOpen ? 'hidden' : '';
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
-  }, [open, dockOpen, isAdmin]);
+  }, [menuOpen, isAdmin]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setSoftOpen(false);
+    setDataOpen(false);
+  }, [pathname]);
 
   if (isAdmin) {
     return null;
   }
 
   const closeAll = () => {
-    setOpen(false);
-    setDockOpen(false);
+    setMenuOpen(false);
     setSoftOpen(false);
     setDataOpen(false);
   };
 
+  const mobileLinks = [
+    { label: 'Home', href: '/' },
+    { label: softwareNav.label, href: softwareNav.href },
+    { label: dataNav.label, href: dataNav.href },
+    ...simpleNav.filter((l) => l.href !== '/contact'),
+  ];
+
   return (
-    <>
-      {/* Pill-shaped Top Navbar */}
-      <header
-        className={`site-nav ${solid ? 'is-solid' : ''}`}
-        ref={navRef}
-      >
-        <div className="site-nav__bar">
-          <Link href="/" className="site-nav__logo" aria-label="Techverse Infotech home" onClick={closeAll}>
-            <span className="site-nav__mark">
-              <Image
-                src="/images/techverse-logo.jpg"
-                alt="Techverse Infotech Emblem"
-                width={32}
-                height={32}
-                style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-              />
-            </span>
-            Techverse Infotech
-          </Link>
+    <header className={`site-nav ${solid ? 'is-solid' : ''} ${menuOpen ? 'is-menu-open' : ''}`} ref={navRef}>
+      <div className="site-nav__bar">
+        <Link href="/" className="site-nav__logo" aria-label="Techverse Infotech home" onClick={closeAll}>
+          <span className="site-nav__mark">
+            <Image
+              src="/images/techverse-logo.jpg"
+              alt=""
+              width={32}
+              height={32}
+              style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+            />
+          </span>
+          Techverse Infotech
+        </Link>
 
-          <nav className="site-nav__links" aria-label="Main">
-            <div className="nav-drop">
-              <button
-                type="button"
-                className={`nav-drop__btn ${softOpen ? 'is-open' : ''}`}
-                aria-expanded={softOpen}
-                onClick={() => {
-                  setSoftOpen((v) => !v);
-                  setDataOpen(false);
-                }}
-              >
-                {softwareNav.label}
-                <span aria-hidden="true" style={{ fontSize: '11px', opacity: 0.7 }}>▾</span>
-              </button>
-              {softOpen && (
-                <div className="nav-mega" role="region" aria-label="Software Development">
-                  <div className="nav-mega__intro">
-                    <Link href={softwareNav.href} onClick={closeAll} className="nav-mega__hub">
-                      All software services
-                    </Link>
-                    <p>Custom software, ERP systems, mobile applications, and AI automation.</p>
-                  </div>
-                  <ul className="nav-mega__list">
-                    {softwareNav.items.map((item) => (
-                      <li key={item.href}>
-                        <Link href={item.href} onClick={closeAll}>
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            <div className="nav-drop">
-              <button
-                type="button"
-                className={`nav-drop__btn ${dataOpen ? 'is-open' : ''}`}
-                aria-expanded={dataOpen}
-                onClick={() => {
-                  setDataOpen((v) => !v);
-                  setSoftOpen(false);
-                }}
-              >
-                {dataNav.label}
-                <span aria-hidden="true" style={{ fontSize: '11px', opacity: 0.7 }}>▾</span>
-              </button>
-              {dataOpen && (
-                <div className="nav-mega nav-mega--quiet" role="region" aria-label="AI Data Services">
-                  <div className="nav-mega__intro">
-                    <Link href={dataNav.href} onClick={closeAll} className="nav-mega__hub">
-                      All AI data services
-                    </Link>
-                    <p>Annotation, labelling, training data, collection, and processing.</p>
-                  </div>
-                  <ul className="nav-mega__list">
-                    {dataNav.items.map((item) => (
-                      <li key={item.href}>
-                        <Link href={item.href} onClick={closeAll}>
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-
-            {simpleNav
-              .filter((l) => l.href !== '/contact')
-              .map((link) => (
-                <Link key={link.href} href={link.href} onClick={closeAll}>
-                  {link.label}
-                </Link>
-              ))}
-          </nav>
-
-          <div className="site-nav__actions">
-            <Link className="btn btn--primary site-nav__contact-btn" href={SITE.primaryCta.href} onClick={closeAll}>
-              Contact Us
-            </Link>
+        <nav className="site-nav__links" aria-label="Main">
+          <div className="nav-drop">
             <button
-              className="site-nav__toggle"
               type="button"
-              aria-expanded={open}
-              aria-label={open ? 'Close menu' : 'Open menu'}
-              onClick={() => setOpen((v) => !v)}
+              className={`nav-drop__btn ${softOpen ? 'is-open' : ''}`}
+              aria-expanded={softOpen}
+              onClick={() => {
+                setSoftOpen((v) => !v);
+                setDataOpen(false);
+              }}
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
-                {open ? (
-                  <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                ) : (
-                  <path d="M2 5h14M2 13h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {open && (
-          <div className="site-nav__drawer is-open">
-            <Link href={softwareNav.href} onClick={closeAll}>
               {softwareNav.label}
-            </Link>
-            <Link href={dataNav.href} onClick={closeAll}>
+              <span aria-hidden="true" style={{ fontSize: '11px', opacity: 0.7 }}>
+                ▾
+              </span>
+            </button>
+            {softOpen && (
+              <div className="nav-mega" role="region" aria-label="Software Development">
+                <div className="nav-mega__intro">
+                  <Link href={softwareNav.href} onClick={closeAll} className="nav-mega__hub">
+                    All software services
+                  </Link>
+                  <p>Custom software, ERP systems, mobile applications, and AI automation.</p>
+                </div>
+                <ul className="nav-mega__list">
+                  {softwareNav.items.map((item) => (
+                    <li key={item.href}>
+                      <Link href={item.href} onClick={closeAll}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="nav-drop">
+            <button
+              type="button"
+              className={`nav-drop__btn ${dataOpen ? 'is-open' : ''}`}
+              aria-expanded={dataOpen}
+              onClick={() => {
+                setDataOpen((v) => !v);
+                setSoftOpen(false);
+              }}
+            >
               {dataNav.label}
-            </Link>
-            {simpleNav.map((link) => (
+              <span aria-hidden="true" style={{ fontSize: '11px', opacity: 0.7 }}>
+                ▾
+              </span>
+            </button>
+            {dataOpen && (
+              <div className="nav-mega nav-mega--quiet" role="region" aria-label="AI Data Services">
+                <div className="nav-mega__intro">
+                  <Link href={dataNav.href} onClick={closeAll} className="nav-mega__hub">
+                    All AI data services
+                  </Link>
+                  <p>Annotation, labelling, training data, collection, and processing.</p>
+                </div>
+                <ul className="nav-mega__list">
+                  {dataNav.items.map((item) => (
+                    <li key={item.href}>
+                      <Link href={item.href} onClick={closeAll}>
+                        {item.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {simpleNav
+            .filter((l) => l.href !== '/contact')
+            .map((link) => (
               <Link key={link.href} href={link.href} onClick={closeAll}>
                 {link.label}
               </Link>
             ))}
-            <Link href={SITE.primaryCta.href} onClick={closeAll} style={{ fontWeight: 700, color: '#9333ea' }}>
-              Contact Us →
-            </Link>
-          </div>
-        )}
-      </header>
+        </nav>
 
-      {/* Floating Bottom Pill Dock with Progress Bar & Menu */}
-      <div className="site-dock" role="navigation" aria-label="Quick menu">
-        <span className="site-dock__mark" aria-hidden="true">
-          <Image
-            src="/images/techverse-logo.jpg"
-            alt="Techverse"
-            width={32}
-            height={32}
-            style={{ objectFit: 'cover' }}
-          />
-        </span>
-
-        {/* Dynamic Round Circular Progress Ring (DOM-updated; no scroll re-renders) */}
-        <div
-          ref={progressWrapRef}
-          className="site-dock__round-progress"
-          role="progressbar"
-          aria-valuenow={0}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Scroll progress: 0%"
-          title="Scroll progress: 0%"
-        >
-          <svg width="34" height="34" viewBox="0 0 36 36">
-            <defs>
-              <linearGradient id="dock-round-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#9333ea" />
-                <stop offset="50%" stopColor="#c026d3" />
-                <stop offset="100%" stopColor="#ec4899" />
-              </linearGradient>
-            </defs>
-            <circle
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="rgba(255, 255, 255, 0.16)"
-              strokeWidth="3.2"
-            />
-            <circle
-              ref={progressRingRef}
-              cx="18"
-              cy="18"
-              r="14"
-              fill="none"
-              stroke="url(#dock-round-grad)"
-              strokeWidth="3.2"
-              strokeLinecap="round"
-              strokeDasharray={88}
-              strokeDashoffset={88}
-              transform="rotate(-90 18 18)"
-            />
-          </svg>
+        <div className="site-nav__actions">
+          <Link className="btn btn--primary site-nav__contact-btn" href={SITE.primaryCta.href} onClick={closeAll}>
+            Contact Us
+          </Link>
+          <button
+            className="site-nav__toggle"
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="site-nav-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true">
+              {menuOpen ? (
+                <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              ) : (
+                <path d="M2 5h14M2 13h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              )}
+            </svg>
+          </button>
         </div>
-
-        <button
-          type="button"
-          className="site-dock__menu"
-          onClick={() => setDockOpen(true)}
-          aria-expanded={dockOpen}
-        >
-          Menu
-        </button>
       </div>
 
-      {dockOpen && (
-        <div
-          className="site-dock__panel"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site menu"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setDockOpen(false);
-          }}
-        >
-          <div className="site-dock__sheet">
-            <p className="muted">Navigate</p>
-            <Link href="/" onClick={closeAll}>
-              Home
+      {/* Mobile menu — expands from the same nav pill */}
+      <div
+        id="site-nav-menu"
+        className={`site-nav__drawer ${menuOpen ? 'is-open' : ''}`}
+        aria-hidden={!menuOpen}
+      >
+        <nav className="site-nav__drawer-links" aria-label="Mobile">
+          {mobileLinks.map((link) => (
+            <Link key={link.href} href={link.href} onClick={closeAll}>
+              {link.label}
             </Link>
-            <Link href={softwareNav.href} onClick={closeAll}>
-              Software Development
-            </Link>
-            <Link href={dataNav.href} onClick={closeAll}>
-              AI Data Services
-            </Link>
-            <Link href="/industries" onClick={closeAll}>
-              Industries
-            </Link>
-            <Link href="/about" onClick={closeAll}>
-              About Us
-            </Link>
-            <Link href="/contact" onClick={closeAll}>
-              Contact Us
-            </Link>
-            <div style={{ paddingTop: 8 }}>
-              <button type="button" className="btn btn--ghost" style={{ width: '100%' }} onClick={() => setDockOpen(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+          ))}
+        </nav>
+        <Link className="btn btn--primary site-nav__drawer-cta" href={SITE.primaryCta.href} onClick={closeAll}>
+          Contact Us
+        </Link>
+      </div>
+    </header>
   );
 }
