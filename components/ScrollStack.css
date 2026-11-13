@@ -12,6 +12,20 @@
   padding: clamp(24px, 4vh, 44px) clamp(1.25rem, 4vw, 3.5rem) 32vh;
 }
 
+/* Mobile: no JS pin/scale — stable native scroll list */
+.scroll-stack-scroller--static .scroll-stack-inner {
+  padding: 8px clamp(1rem, 4vw, 1.5rem) 8px;
+  display: grid;
+  gap: 14px;
+}
+.scroll-stack-scroller--static .scroll-stack-card {
+  will-change: auto;
+  transform: none !important;
+  filter: none !important;
+  margin-bottom: 0 !important;
+  min-height: 0;
+}
+
 /* Compact cards that grow with content — never clip text/CTA */
 .scroll-stack-card {
   transform-origin: top center;
@@ -146,18 +160,24 @@
 
 @media (max-width: 767px) {
   .scroll-stack-card {
-    min-height: 16.5rem;
-    border-radius: 28px;
-    padding: 1.25rem 1.15rem 1.35rem;
-    gap: 1.15rem;
+    min-height: 0;
+    border-radius: 24px;
+    padding: 1.2rem 1.1rem 1.3rem;
+    gap: 1rem;
   }
 
   .ss-card__title {
     max-width: 16ch;
-    font-size: clamp(1.3rem, 6vw, 1.65rem);
+    font-size: clamp(1.25rem, 5.5vw, 1.55rem);
   }
 
   .ss-card__bottom {
     grid-template-columns: 1fr;
   }
+}
+
+.ss-lead-mobile { display: none; }
+@media (max-width: 899px) {
+  .ss-lead-desktop { display: none; }
+  .ss-lead-mobile { display: block; }
 }

@@ -13,7 +13,8 @@ export default function Services() {
         <div className="section-head">
           <p className="t-label">Software</p>
           <h2 id="services-stack-h">What we build</h2>
-          <p className="lead">Scroll the stack—each card is one software practice.</p>
+          <p className="lead ss-lead-desktop">Scroll the stack—each card is one software practice.</p>
+          <p className="lead ss-lead-mobile">Each card is one software practice.</p>
         </div>
       </div>
 
