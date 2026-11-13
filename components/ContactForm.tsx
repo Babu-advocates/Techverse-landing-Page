@@ -108,7 +108,7 @@ export default function ContactForm() {
           />
         </div>
         <div className="form-field">
-          <label htmlFor="websiteUrl">Website URL</label>
+          <label htmlFor="websiteUrl">Website URL (optional)</label>
           <input
             id="websiteUrl"
             name="websiteUrl"
