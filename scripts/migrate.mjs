@@ -2,9 +2,12 @@ import { Pool } from '@neondatabase/serverless';
 import fs from 'fs';
 import path from 'path';
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  'postgresql://neondb_owner:REDACTED_PASSWORD@ep-your-database-id.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  console.error('Error: DATABASE_URL environment variable is required to run migrations.');
+  process.exit(1);
+}
 
 async function runMigration() {
   console.log('Connecting to Neon PostgreSQL with Pool...');

@@ -1,8 +1,6 @@
 import { Pool } from '@neondatabase/serverless';
 
-const connectionString =
-  process.env.DATABASE_URL ||
-  'postgresql://neondb_owner:REDACTED_PASSWORD@ep-your-database-id.aws.neon.tech/neondb?sslmode=require&channel_binding=require';
+const connectionString = process.env.DATABASE_URL || '';
 
 // Global singleton pool for Next.js hot-reloading
 const globalForDb = globalThis as unknown as {
@@ -11,27 +9,29 @@ const globalForDb = globalThis as unknown as {
 
 export const pool =
   globalForDb.neonPool ??
-  new Pool({
-    connectionString,
-    max: 10,
-    idleTimeoutMillis: 30000,
-  });
+  (connectionString
+    ? new Pool({
+        connectionString,
+        max: 10,
+        idleTimeoutMillis: 30000,
+      })
+    : (null as unknown as Pool));
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && pool) {
   globalForDb.neonPool = pool;
 }
 
 export async function query<T = any>(text: string, params: any[] = []): Promise<T[]> {
+  if (!pool) {
+    console.error('[db-error] DATABASE_URL environment variable is not defined.');
+    return [];
+  }
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    if (process.env.NODE_ENV === 'development' && duration > 500) {
-      console.warn(`[db-slow-query] (${duration}ms): ${text.slice(0, 100)}`);
-    }
     return res.rows as T[];
-  } catch (error) {
-    console.error(`[db-error] in query: ${text.slice(0, 120)}`, error);
-    throw error;
+  } catch (err) {
+    console.error(`[db-error] in query: ${text.slice(0, 100)}`, err);
+    throw err;
   }
 }
