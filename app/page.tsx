@@ -3,6 +3,7 @@ import { buildMetadata, homeSeo } from '@/content';
 import HomeHero from '@/components/home/HomeHero';
 import WhatWeDo from '@/components/home/WhatWeDo';
 import Services from '@/components/Services';
+import Products from '@/components/home/Products';
 import WhyChoose from '@/components/home/WhyChoose';
 import IndustriesHome from '@/components/home/IndustriesHome';
 import ProcessHome from '@/components/home/ProcessHome';
@@ -18,6 +19,7 @@ export default function Home() {
       <HomeHero />
       <WhatWeDo />
       <Services />
+      <Products />
       <WhyChoose />
       <IndustriesHome />
       <ProcessHome />

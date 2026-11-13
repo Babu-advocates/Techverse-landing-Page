@@ -1,28 +1,17 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { FormEvent, useState } from 'react';
 import { CheckCircle2, AlertCircle, Send, Mail } from 'lucide-react';
-import { serviceOptions, timelineOptions, budgetOptionsByCurrency, type CurrencyCode } from '@/content';
+import { serviceOptions, budgetOptionsByCurrency, type CurrencyCode } from '@/content';
 import CustomSelect from './CustomSelect';
-import PhoneInput from './PhoneInput';
 
 type Status = { type: 'ok' | 'err'; message: string } | null;
 
 export default function ContactForm() {
-  const params = useSearchParams();
-  const preset = params.get('service') || '';
   const [status, setStatus] = useState<Status>(null);
   const [pending, setPending] = useState(false);
 
-  const initialService = useMemo(() => {
-    const all = serviceOptions.flatMap((g) => [...g.items]);
-    return all.includes(preset as (typeof all)[number]) ? preset : '';
-  }, [preset]);
-
-  // Form states for custom dropdowns and currency selection
-  const [service, setService] = useState(initialService);
-  const [timeline, setTimeline] = useState('');
+  const [service, setService] = useState('');
   const [currency, setCurrency] = useState<CurrencyCode>('INR');
   const [budget, setBudget] = useState('');
   const [formKey, setFormKey] = useState(0);
@@ -30,7 +19,7 @@ export default function ContactForm() {
   function handleCurrencyChange(newCurrency: CurrencyCode) {
     if (newCurrency !== currency) {
       setCurrency(newCurrency);
-      setBudget(''); // Reset budget when currency changes
+      setBudget('');
     }
   }
 
@@ -62,8 +51,7 @@ export default function ContactForm() {
             'Thank you. Your project inquiry has been received. Our technical team will review and reply within 24–48 hours.',
         });
         form.reset();
-        setService(initialService);
-        setTimeline('');
+        setService('');
         setCurrency('INR');
         setBudget('');
         setFormKey((k) => k + 1);
@@ -82,7 +70,7 @@ export default function ContactForm() {
     <form key={formKey} className="contact-form" onSubmit={onSubmit} noValidate>
       {/* Honeypot field strictly hidden */}
       <div style={{ display: 'none' }} aria-hidden="true">
-        <input type="text" name="website" tabIndex={-1} autoComplete="off" />
+        <input type="text" name="fax" tabIndex={-1} autoComplete="off" />
       </div>
 
       <div className="contact-form__row">
@@ -120,13 +108,19 @@ export default function ContactForm() {
           />
         </div>
         <div className="form-field">
-          <label htmlFor="phone">Phone Number</label>
-          <PhoneInput id="phone" name="phone" />
+          <label htmlFor="websiteUrl">Website URL</label>
+          <input
+            id="websiteUrl"
+            name="websiteUrl"
+            type="url"
+            autoComplete="url"
+            placeholder="https://www.example.com"
+          />
         </div>
       </div>
 
       <div className="form-field">
-        <label htmlFor="service">Service Required *</label>
+        <label htmlFor="service">Service Required</label>
         <CustomSelect
           id="service"
           name="service"
@@ -134,12 +128,11 @@ export default function ContactForm() {
           onChange={setService}
           options={serviceOptions}
           placeholder="Select a service practice"
-          required
         />
       </div>
 
       <div className="form-field">
-        <label htmlFor="description">Project Description *</label>
+        <label htmlFor="description">How can we help *</label>
         <textarea
           id="description"
           name="description"
@@ -149,52 +142,37 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="contact-form__row">
-        <div className="form-field">
-          <label htmlFor="timeline">Expected Timeline</label>
-          <CustomSelect
-            id="timeline"
-            name="timeline"
-            value={timeline}
-            onChange={setTimeline}
-            options={timelineOptions}
-            placeholder="Select target timeline"
-          />
-        </div>
-
-        <div className="form-field">
-          <div className="form-field__label-row">
-            <label htmlFor="budget">Budget Range (optional)</label>
-            {/* Currency selector toggle: INR (default) vs USD */}
-            <div className="currency-selector" role="group" aria-label="Select currency">
-              <button
-                type="button"
-                className={`currency-btn ${currency === 'INR' ? 'currency-btn--active' : ''}`}
-                onClick={() => handleCurrencyChange('INR')}
-              >
-                ₹ INR
-              </button>
-              <button
-                type="button"
-                className={`currency-btn ${currency === 'USD' ? 'currency-btn--active' : ''}`}
-                onClick={() => handleCurrencyChange('USD')}
-              >
-                $ USD
-              </button>
-            </div>
+      <div className="form-field">
+        <div className="form-field__label-row">
+          <label htmlFor="budget">Budget Range (optional)</label>
+          <div className="currency-selector" role="group" aria-label="Select currency">
+            <button
+              type="button"
+              className={`currency-btn ${currency === 'INR' ? 'currency-btn--active' : ''}`}
+              onClick={() => handleCurrencyChange('INR')}
+            >
+              ₹ INR
+            </button>
+            <button
+              type="button"
+              className={`currency-btn ${currency === 'USD' ? 'currency-btn--active' : ''}`}
+              onClick={() => handleCurrencyChange('USD')}
+            >
+              $ USD
+            </button>
           </div>
-
-          <input type="hidden" name="currency" value={currency} />
-
-          <CustomSelect
-            id="budget"
-            name="budget"
-            value={budget}
-            onChange={setBudget}
-            options={budgetOptionsByCurrency[currency]}
-            placeholder="Select budget range"
-          />
         </div>
+
+        <input type="hidden" name="currency" value={currency} />
+
+        <CustomSelect
+          id="budget"
+          name="budget"
+          value={budget}
+          onChange={setBudget}
+          options={budgetOptionsByCurrency[currency]}
+          placeholder="Select budget range"
+        />
       </div>
 
       {status && (

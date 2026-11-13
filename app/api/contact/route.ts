@@ -5,12 +5,12 @@ type Body = {
   fullName?: string;
   company?: string;
   email?: string;
-  phone?: string;
+  websiteUrl?: string;
   service?: string;
   description?: string;
-  timeline?: string;
   budget?: string;
-  website?: string; // honeypot
+  currency?: string;
+  fax?: string; // honeypot
 };
 
 const rateMap = new Map<string, { count: number; reset: number }>();
@@ -43,17 +43,16 @@ export async function POST(req: Request) {
     const body = (await req.json()) as Body;
 
     // Honeypot
-    if (body.website) {
+    if (body.fax) {
       return NextResponse.json({ ok: true });
     }
 
     const fullName = (body.fullName || '').trim();
     const company = (body.company || '').trim();
     const email = (body.email || '').trim();
-    const phone = (body.phone || '').trim();
+    const websiteUrl = (body.websiteUrl || '').trim();
     const service = (body.service || '').trim();
     const description = (body.description || '').trim();
-    const timeline = (body.timeline || '').trim();
     const budget = (body.budget || '').trim();
 
     if (!fullName || fullName.length < 2) {
@@ -62,11 +61,8 @@ export async function POST(req: Request) {
     if (!email || !isEmail(email)) {
       return NextResponse.json({ ok: false, error: 'Please enter a valid business email.' }, { status: 400 });
     }
-    if (!service) {
-      return NextResponse.json({ ok: false, error: 'Please select a service.' }, { status: 400 });
-    }
     if (!description || description.length < 20) {
-      return NextResponse.json({ ok: false, error: 'Please provide a bit more detail about your project.' }, { status: 400 });
+      return NextResponse.json({ ok: false, error: 'Please provide a bit more detail about how we can help.' }, { status: 400 });
     }
 
     const to = process.env.CONTACT_TO || 'contact@techverseinfotech.com';
@@ -77,13 +73,12 @@ export async function POST(req: Request) {
       `New project inquiry from ${fullName}`,
       `Company: ${company || '—'}`,
       `Email: ${email}`,
-      `Phone: ${phone || '—'}`,
-      `Service: ${service}`,
-      `Timeline: ${timeline || '—'}`,
+      `Website: ${websiteUrl || '—'}`,
+      `Service: ${service || '—'}`,
       `Currency: ${body.currency || 'INR'}`,
       `Budget: ${budget || '—'}`,
       '',
-      'Project description:',
+      'How can we help:',
       description,
     ].join('\n');
 
@@ -102,7 +97,7 @@ export async function POST(req: Request) {
       from,
       to: [to],
       replyTo: email,
-      subject: `Project inquiry: ${service} — ${fullName}`,
+      subject: `Project inquiry: ${service || 'General'} — ${fullName}`,
       text,
     });
 

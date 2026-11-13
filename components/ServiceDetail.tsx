@@ -11,13 +11,28 @@ import {
   ShieldCheck,
   Workflow,
   Target,
-  Terminal,
   Cpu,
-  Lock,
-  Boxes,
   FileCode,
-  Milestone,
-  Check,
+  Receipt,
+  Users,
+  Package,
+  UserCog,
+  ShoppingBag,
+  LayoutDashboard,
+  Boxes,
+  GraduationCap,
+  Landmark,
+  Wallet,
+  Smartphone,
+  TabletSmartphone,
+  Briefcase,
+  MapPinned,
+  Bot,
+  Sparkles,
+  FileSearch,
+  MessageSquare,
+  Activity,
+  type LucideIcon,
 } from 'lucide-react';
 import CtaBand from './CtaBand';
 import type { ServiceItem } from '@/content';
@@ -37,6 +52,33 @@ const DELIVERABLE_HIGHLIGHTS = [
   'Production-Hardened Implementation & APIs',
   'Automated Test Suites, CI/CD & Knowledge Transfer',
 ];
+
+const SYSTEM_ICONS: Record<string, LucideIcon> = {
+  'Billing Software': Receipt,
+  'CRM Systems': Users,
+  'Inventory Management': Package,
+  'HRMS & Payroll': UserCog,
+  'E-commerce Platforms': ShoppingBag,
+  'Custom Internal Tools': LayoutDashboard,
+  'ERP Systems': Boxes,
+  'School Management Software': GraduationCap,
+  'College Management Software': Landmark,
+  'Finance & Accounting': Wallet,
+  'Inventory & Operations': Package,
+  'HR & Payroll Systems': UserCog,
+  'Android Applications': Smartphone,
+  'iOS Applications': TabletSmartphone,
+  'Cross-Platform Apps': Layers,
+  'E-commerce Mobile Apps': ShoppingBag,
+  'Business & Field Apps': Briefcase,
+  'On-Demand Service Apps': MapPinned,
+  'AI-Powered Applications': Sparkles,
+  'Intelligent Assistants': Bot,
+  'Document Processing': FileSearch,
+  'Workflow Automation': Workflow,
+  'Chatbots & Support AI': MessageSquare,
+  'Process Intelligence': Activity,
+};
 
 export default function ServiceDetail({ service, related, hubHref, hubLabel }: Props) {
   const isSoftware = hubHref.includes('/services');
@@ -117,6 +159,39 @@ export default function ServiceDetail({ service, related, hubHref, hubLabel }: P
           </div>
         </div>
       </section>
+
+      {/* Example systems — custom software types we deliver */}
+      {service.systems && service.systems.length > 0 && (
+        <section className="section detail-section systems-section" aria-labelledby="systems-h">
+          <div className="wrap">
+            <div className="section-head section-head--left">
+              <p className="t-label">Systems we deliver</p>
+              <h2 id="systems-h">Systems built around your operations</h2>
+              <p className="lead">
+                Examples of applications we design and build around your workflows—not off-the-shelf templates.
+              </p>
+            </div>
+
+            <div className="systems-grid">
+              {service.systems.map((system, i) => {
+                const Icon = SYSTEM_ICONS[system.title] ?? Code2;
+                return (
+                  <article key={system.title} className="system-card">
+                    <div className="system-card__top">
+                      <div className="system-card__icon" aria-hidden="true">
+                        <Icon size={20} strokeWidth={1.75} />
+                      </div>
+                      <span className="system-card__n">/{String(i + 1).padStart(2, '0')}</span>
+                    </div>
+                    <h3 className="system-card__title">{system.title}</h3>
+                    <p className="system-card__copy">{system.blurb}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Deliverables Grid Section */}
       <section className="section detail-section">

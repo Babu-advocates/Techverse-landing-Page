@@ -15,12 +15,18 @@ export type NavGroup = {
   items: NavLink[];
 };
 
+export type ServiceSystem = {
+  title: string;
+  blurb: string;
+};
+
 export type ServiceItem = {
   slug: string;
   title: string;
   short: string;
   intro: string;
   deliverables: string[];
+  systems?: ServiceSystem[];
   audience: string;
   engagement: string;
   related: string[];

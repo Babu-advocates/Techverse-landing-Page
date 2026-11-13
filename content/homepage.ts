@@ -24,6 +24,25 @@ export const whatWeDo = {
     'Annotation, labelling, collection, and QA for AI teams that need reliable volume without drama.',
 };
 
+export const products = {
+  label: 'Products',
+  headline: 'Software we ship and support.',
+  description: 'Products built by Techverse Infotech—designed for real institutions, not demos.',
+  items: [
+    {
+      name: 'KALVION',
+      tagline: 'School management application',
+      description:
+        'Manage your school from one application—academics, administration, and day-to-day operations in a single place.',
+      logo: '/images/kalvion-logo.png',
+      logoAlt: 'KALVION school management app logo',
+      playStoreUrl: 'https://play.google.com/store/apps/details?id=com.techverse.kalvion',
+      ctaLabel: 'Get it on Google Play',
+      highlights: ['Students & staff', 'Academics & attendance', 'Fees & administration'],
+    },
+  ],
+};
+
 export const whyChoose = {
   headline: 'A partner focused on outcomes.',
   description:

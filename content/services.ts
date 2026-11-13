@@ -13,6 +13,32 @@ export const softwareServices: ServiceItem[] = [
       'Application design and development',
       'Testing, deployment support, and handoff documentation',
     ],
+    systems: [
+      {
+        title: 'Billing Software',
+        blurb: 'Invoicing, payments, subscriptions, and revenue tracking shaped to your pricing model.',
+      },
+      {
+        title: 'CRM Systems',
+        blurb: 'Lead pipelines, customer records, follow-ups, and sales workflows for growth teams.',
+      },
+      {
+        title: 'Inventory Management',
+        blurb: 'Stock levels, warehouses, purchase orders, and fulfilment visibility in real time.',
+      },
+      {
+        title: 'HRMS & Payroll',
+        blurb: 'Attendance, leave, payroll runs, and employee records for day-to-day people ops.',
+      },
+      {
+        title: 'E-commerce Platforms',
+        blurb: 'Catalog, checkout, orders, and customer accounts for digital retail businesses.',
+      },
+      {
+        title: 'Custom Internal Tools',
+        blurb: 'Workflow apps, portals, and dashboards that replace spreadsheets and manual handoffs.',
+      },
+    ],
     audience: 'Startups, SMBs, enterprises, and institutions that need software tailored to their processes—not a one-size-fits-all product.',
     engagement:
       'Engagements typically begin with a discovery conversation, followed by scoped planning and iterative delivery with clear milestones.',
@@ -36,6 +62,32 @@ export const softwareServices: ServiceItem[] = [
       'Role-based access and workflow design',
       'Reporting and operational dashboards',
       'Integration with existing tools where needed',
+    ],
+    systems: [
+      {
+        title: 'ERP Systems',
+        blurb: 'Finance, inventory, HR, and operations connected in one integrated business platform.',
+      },
+      {
+        title: 'School Management Software',
+        blurb: 'Academics, admissions, fees, attendance, and administration for schools.',
+      },
+      {
+        title: 'College Management Software',
+        blurb: 'Students, faculty, courses, exams, and campus operations for colleges and universities.',
+      },
+      {
+        title: 'Finance & Accounting',
+        blurb: 'Ledgers, invoicing, expenses, and reporting tailored to your finance workflows.',
+      },
+      {
+        title: 'Inventory & Operations',
+        blurb: 'Stock, warehouses, purchase orders, and day-to-day operational control.',
+      },
+      {
+        title: 'HR & Payroll Systems',
+        blurb: 'Attendance, leave, payroll runs, and employee records in one place.',
+      },
     ],
     audience: 'Growing businesses and institutions that need unified systems for day-to-day operations.',
     engagement:
@@ -61,6 +113,32 @@ export const softwareServices: ServiceItem[] = [
       'Backend and API integration',
       'Store submission support and release readiness',
     ],
+    systems: [
+      {
+        title: 'Android Applications',
+        blurb: 'Native and modern Android apps built for performance, usability, and Play Store readiness.',
+      },
+      {
+        title: 'iOS Applications',
+        blurb: 'iPhone and iPad apps designed for smooth UX, reliability, and App Store guidelines.',
+      },
+      {
+        title: 'Cross-Platform Apps',
+        blurb: 'Shared codebase apps that reach Android and iOS without compromising quality.',
+      },
+      {
+        title: 'E-commerce Mobile Apps',
+        blurb: 'Catalog, cart, checkout, and order tracking experiences for digital retail brands.',
+      },
+      {
+        title: 'Business & Field Apps',
+        blurb: 'Sales, attendance, inventory, and field-force tools that keep teams productive on the go.',
+      },
+      {
+        title: 'On-Demand Service Apps',
+        blurb: 'Booking, dispatch, payments, and customer journeys for service-led businesses.',
+      },
+    ],
     audience: 'Businesses launching customer apps, field tools, or mobile companions to existing systems.',
     engagement:
       'We clarify platforms, features, and integrations early, then deliver builds you can test and refine before wider release.',
@@ -84,6 +162,32 @@ export const softwareServices: ServiceItem[] = [
       'Workflow and document automation',
       'Intelligent assistants for defined business tasks',
       'Evaluation, guardrails, and integration planning',
+    ],
+    systems: [
+      {
+        title: 'AI-Powered Applications',
+        blurb: 'Practical AI features embedded into products and internal tools for real business outcomes.',
+      },
+      {
+        title: 'Intelligent Assistants',
+        blurb: 'Task-focused assistants that help teams answer questions, draft work, and complete routines faster.',
+      },
+      {
+        title: 'Document Processing',
+        blurb: 'Extract, classify, and process documents so paperwork becomes searchable, structured data.',
+      },
+      {
+        title: 'Workflow Automation',
+        blurb: 'Automate approvals, handoffs, and repetitive processes across your existing systems.',
+      },
+      {
+        title: 'Chatbots & Support AI',
+        blurb: 'Customer and internal support bots trained on your knowledge base and operating rules.',
+      },
+      {
+        title: 'Process Intelligence',
+        blurb: 'Insights and alerts that help teams spot bottlenecks, exceptions, and next-best actions.',
+      },
     ],
     audience: 'Teams ready to automate repetitive work or embed AI into products and operations.',
     engagement:
