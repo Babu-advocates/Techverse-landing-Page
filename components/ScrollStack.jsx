@@ -28,9 +28,12 @@ const ScrollStack = ({
   const cardsRef = useRef([]);
   const cardOffsetsRef = useRef([]);
   const endOffsetRef = useRef(0);
+  /** Frozen viewport height — live innerHeight shakes on mobile URL-bar show/hide */
+  const layoutHeightRef = useRef(0);
   const lastTransformsRef = useRef(new Map());
   const isUpdatingRef = useRef(false);
   const resizeTimerRef = useRef(null);
+  const pendingRafRef = useRef(0);
 
   const parsePercentage = useCallback((value, containerHeight) => {
     if (typeof value === 'string' && value.includes('%')) {
@@ -40,6 +43,7 @@ const ScrollStack = ({
   }, []);
 
   const calculateProgress = useCallback((scrollTop, start, end) => {
+    if (end <= start) return scrollTop >= start ? 1 : 0;
     if (scrollTop < start) return 0;
     if (scrollTop > end) return 1;
     return (scrollTop - start) / (end - start);
@@ -49,20 +53,28 @@ const ScrollStack = ({
     const cards = cardsRef.current;
     if (!cards.length) return;
 
+    // Prefer visualViewport when present, but freeze for the session until resize
+    const vv = typeof window !== 'undefined' ? window.visualViewport : null;
+    layoutHeightRef.current = Math.round(vv?.height || window.innerHeight);
+
     const prev = cards.map((card) => card.style.transform);
     cards.forEach((card) => {
       card.style.transform = 'none';
     });
 
+    // Force layout once after clearing transforms
+    void scrollerRef.current?.offsetHeight;
+
+    const scrollY = window.scrollY || window.pageYOffset || 0;
     cardOffsetsRef.current = cards.map((card) => {
       const rect = card.getBoundingClientRect();
-      return rect.top + window.scrollY;
+      return Math.round(rect.top + scrollY);
     });
 
     const endEl = scrollerRef.current?.querySelector('.scroll-stack-end');
     if (endEl) {
       const rect = endEl.getBoundingClientRect();
-      endOffsetRef.current = rect.top + window.scrollY;
+      endOffsetRef.current = Math.round(rect.top + scrollY);
     } else {
       endOffsetRef.current = 0;
     }
@@ -74,8 +86,10 @@ const ScrollStack = ({
 
   const getScrollTop = useCallback(() => {
     const lenis = typeof window !== 'undefined' ? window.__techverseLenis : null;
-    if (lenis && typeof lenis.scroll === 'number') return lenis.scroll;
-    return window.scrollY;
+    if (lenis && typeof lenis.scroll === 'number' && Number.isFinite(lenis.scroll)) {
+      return lenis.scroll;
+    }
+    return window.scrollY || window.pageYOffset || 0;
   }, []);
 
   const updateCardTransforms = useCallback(() => {
@@ -83,7 +97,7 @@ const ScrollStack = ({
     isUpdatingRef.current = true;
 
     const scrollTop = getScrollTop();
-    const containerHeight = window.innerHeight;
+    const containerHeight = layoutHeightRef.current || window.innerHeight;
     const stackPositionPx = parsePercentage(stackPosition, containerHeight);
     const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
     const endElementTop = endOffsetRef.current;
@@ -100,7 +114,8 @@ const ScrollStack = ({
 
       const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
       const targetScale = Math.min(1, baseScale + i * itemScale);
-      const scale = 1 - scaleProgress * (1 - targetScale);
+      // Clamp so scale never overshoots 1 or goes negative from float error
+      const scale = Math.min(1, Math.max(targetScale, 1 - scaleProgress * (1 - targetScale)));
       const rotation = rotationAmount ? i * rotationAmount * scaleProgress : 0;
 
       let blur = 0;
@@ -121,6 +136,7 @@ const ScrollStack = ({
         translateY = pinEnd - cardTop + stackPositionPx + itemStackDistance * i;
       }
 
+      // Whole pixels only — subpixel + scale is the classic stack shake
       const next = {
         translateY: Math.round(translateY),
         scale: Math.round(scale * 1000) / 1000,
@@ -169,6 +185,14 @@ const ScrollStack = ({
     onStackComplete,
   ]);
 
+  const scheduleUpdate = useCallback(() => {
+    if (pendingRafRef.current) return;
+    pendingRafRef.current = window.requestAnimationFrame(() => {
+      pendingRafRef.current = 0;
+      updateCardTransforms();
+    });
+  }, [updateCardTransforms]);
+
   useLayoutEffect(() => {
     if (!useWindowScroll) return undefined;
 
@@ -204,7 +228,7 @@ const ScrollStack = ({
     };
 
     if (!attachTick()) {
-      nativeHandler = () => updateCardTransforms();
+      nativeHandler = () => scheduleUpdate();
       window.addEventListener('scroll', nativeHandler, { passive: true });
       pollId = window.setInterval(() => {
         if (attachTick()) {
@@ -224,18 +248,22 @@ const ScrollStack = ({
         measureOffsets();
         lastTransformsRef.current.clear();
         updateCardTransforms();
-      }, 120);
+      }, 160);
     };
     window.addEventListener('resize', onResize);
+    // Ignore visualViewport resize (URL bar) — that's what caused shake; only window resize remasures
+    window.addEventListener('orientationchange', onResize);
 
     return () => {
       if (pollId) window.clearInterval(pollId);
       if (resizeTimerRef.current) window.clearTimeout(resizeTimerRef.current);
+      if (pendingRafRef.current) window.cancelAnimationFrame(pendingRafRef.current);
       if (attached && window.__techverseLenisTick) {
         window.__techverseLenisTick.remove(onTick);
       }
       if (nativeHandler) window.removeEventListener('scroll', nativeHandler);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('orientationchange', onResize);
       cardsRef.current = [];
       cardOffsetsRef.current = [];
       lastTransformsRef.current.clear();
@@ -254,6 +282,7 @@ const ScrollStack = ({
     blurAmount,
     measureOffsets,
     updateCardTransforms,
+    scheduleUpdate,
   ]);
 
   return (

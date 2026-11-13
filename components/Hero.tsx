@@ -27,7 +27,7 @@ export default function Hero() {
 
           <div className="hero__media">
             <Image
-              src="/images/taste/photo-f84970238-1280.jpg"
+              src="/images/taste/photo-f84970238-1280.webp"
               alt="Engineers working at desks in an open office"
               fill
               priority

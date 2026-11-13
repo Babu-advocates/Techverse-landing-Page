@@ -6,7 +6,7 @@ export default function HomeHero() {
     <section className="hero" data-enter aria-labelledby="hero-brand">
       <img
         className="hero__bg"
-        src="/images/office-collaboration.jpg"
+        src="/images/office-collaboration.webp"
         sizes="100vw"
         width={1920}
         height={1080}

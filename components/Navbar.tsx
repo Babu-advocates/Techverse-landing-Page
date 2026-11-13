@@ -14,28 +14,62 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(false);
   const [solid, setSolid] = useState(!isHome);
-  const [progress, setProgress] = useState(0);
   const [softOpen, setSoftOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const progressRingRef = useRef<SVGCircleElement>(null);
+  const progressWrapRef = useRef<HTMLDivElement>(null);
+  const solidRef = useRef(!isHome);
+  const lastProgressRef = useRef(-1);
 
   useEffect(() => {
     if (isAdmin) return;
     setSolid(!isHome);
+    solidRef.current = !isHome;
   }, [isHome, isAdmin]);
 
   useEffect(() => {
     if (isAdmin) return;
-    const onScroll = () => {
+    let raf = 0;
+    const CIRC = 88;
+
+    const apply = () => {
+      raf = 0;
       const y = window.scrollY || 0;
-      if (isHome) setSolid(y > 40);
+      const nextSolid = isHome ? y > 40 : true;
+      if (nextSolid !== solidRef.current) {
+        solidRef.current = nextSolid;
+        setSolid(nextSolid);
+      }
+
       const doc = document.documentElement;
       const max = Math.max(1, doc.scrollHeight - window.innerHeight);
-      setProgress(Math.min(100, Math.round((y / max) * 100)));
+      const progress = Math.min(100, Math.round((y / max) * 100));
+      if (progress === lastProgressRef.current) return;
+      lastProgressRef.current = progress;
+
+      // Update dock ring via DOM — avoid React re-render every scroll frame (causes stack shake)
+      if (progressRingRef.current) {
+        progressRingRef.current.setAttribute('stroke-dashoffset', String(CIRC - (CIRC * progress) / 100));
+      }
+      if (progressWrapRef.current) {
+        progressWrapRef.current.setAttribute('aria-valuenow', String(progress));
+        progressWrapRef.current.setAttribute('aria-label', `Scroll progress: ${progress}%`);
+        progressWrapRef.current.title = `Scroll progress: ${progress}%`;
+      }
     };
-    onScroll();
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(apply);
+    };
+
+    apply();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
   }, [isHome, isAdmin]);
 
   useEffect(() => {
@@ -222,15 +256,16 @@ export default function Navbar() {
           />
         </span>
 
-        {/* Dynamic Round Circular Progress Ring */}
+        {/* Dynamic Round Circular Progress Ring (DOM-updated; no scroll re-renders) */}
         <div
+          ref={progressWrapRef}
           className="site-dock__round-progress"
           role="progressbar"
-          aria-valuenow={progress}
+          aria-valuenow={0}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Scroll progress: ${progress}%`}
-          title={`Scroll progress: ${progress}%`}
+          aria-label="Scroll progress: 0%"
+          title="Scroll progress: 0%"
         >
           <svg width="34" height="34" viewBox="0 0 36 36">
             <defs>
@@ -240,7 +275,6 @@ export default function Navbar() {
                 <stop offset="100%" stopColor="#ec4899" />
               </linearGradient>
             </defs>
-            {/* Background Circular Track */}
             <circle
               cx="18"
               cy="18"
@@ -249,8 +283,8 @@ export default function Navbar() {
               stroke="rgba(255, 255, 255, 0.16)"
               strokeWidth="3.2"
             />
-            {/* Animated Circular Progress Stroke */}
             <circle
+              ref={progressRingRef}
               cx="18"
               cy="18"
               r="14"
@@ -259,12 +293,8 @@ export default function Navbar() {
               strokeWidth="3.2"
               strokeLinecap="round"
               strokeDasharray={88}
-              strokeDashoffset={88 - (88 * progress) / 100}
+              strokeDashoffset={88}
               transform="rotate(-90 18 18)"
-              style={{
-                transition: 'stroke-dashoffset 0.1s linear',
-                filter: 'drop-shadow(0 0 4px rgba(192, 38, 211, 0.6))',
-              }}
             />
           </svg>
         </div>

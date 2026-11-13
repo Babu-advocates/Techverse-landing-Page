@@ -19,12 +19,12 @@ export default function Services() {
 
       <ScrollStack
         useWindowScroll
-        itemDistance={130}
-        itemStackDistance={82}
-        stackPosition="116px"
-        scaleEndPosition="10%"
-        baseScale={0.88}
-        itemScale={0.035}
+        itemDistance={110}
+        itemStackDistance={64}
+        stackPosition="96px"
+        scaleEndPosition="12%"
+        baseScale={0.9}
+        itemScale={0.025}
         blurAmount={0}
         rotationAmount={0}
       >
