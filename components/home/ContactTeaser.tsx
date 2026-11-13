@@ -14,6 +14,9 @@ export default function ContactTeaser() {
           <Link className="btn btn--primary" href={SITE.primaryCta.href} style={{ background: '#fff', color: '#121212' }}>
             Contact Us
           </Link>
+          <a className="btn btn--ghost" href={`tel:${SITE.phoneRaw}`} style={{ borderColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>
+            Call: {SITE.phone}
+          </a>
           <a className="btn btn--ghost" href={`mailto:${SITE.email}`} style={{ borderColor: 'rgba(255,255,255,0.2)', color: '#fff' }}>
             {SITE.email}
           </a>

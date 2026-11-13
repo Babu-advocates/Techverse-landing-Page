@@ -75,7 +75,23 @@ export default function Footer() {
 
           <div className="site-footer__col">
             <h4>Contact</h4>
-            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+            <a href={`mailto:${SITE.email}`} style={{ display: 'block', marginBottom: 8 }}>
+              {SITE.email}
+            </a>
+            <a
+              href={`tel:${SITE.phoneRaw}`}
+              style={{ display: 'block', marginBottom: 8, color: 'var(--p-inv-fg, #fff)' }}
+            >
+              {SITE.phone}
+            </a>
+            <a
+              href={SITE.whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#25D366', fontWeight: 500 }}
+            >
+              WhatsApp: {SITE.phoneDisplay}
+            </a>
           </div>
         </div>
 

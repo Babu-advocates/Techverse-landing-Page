@@ -3,6 +3,7 @@ import './globals.css';
 import SmoothScroll from '@/components/SmoothScroll';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import { SITE, homeSeo } from '@/content';
 
 export const viewport: Viewport = {
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: SITE.name,
     url: `${SITE.url}/`,
     email: SITE.email,
+    telephone: SITE.phone,
     description: SITE.tagline,
     sameAs: [SITE.url],
   };
@@ -79,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Navbar />
           <main id="top">{children}</main>
           <Footer />
+          <WhatsAppButton />
         </SmoothScroll>
       </body>
     </html>
