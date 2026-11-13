@@ -1747,45 +1747,6 @@ html.lenis, html.lenis body { height: auto; }
   transform: translateY(-1px);
 }
 
-/* Hero Stats Strip */
-.hub-hero__stats {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 24px;
-  margin-top: 56px;
-  padding-top: 36px;
-  border-top: 1px solid var(--p-line);
-}
-
-.hub-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hub-stat__val {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  color: var(--p-ink);
-  line-height: 1;
-}
-
-.hub-stat__label {
-  font-size: 12px;
-  color: var(--p-muted);
-  letter-spacing: 0.02em;
-  font-weight: 500;
-}
-
-.hub-stat-divider {
-  width: 1px;
-  height: 36px;
-  background: var(--p-line);
-}
-
 /* Services section */
 .hub-services-section {
   background: var(--p-bg);

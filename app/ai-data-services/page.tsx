@@ -60,23 +60,6 @@ export default function AiDataHubPage() {
               Get a Quote
             </Link>
           </div>
-
-          <div className="hub-hero__stats">
-            <div className="hub-stat">
-              <span className="hub-stat__val">7</span>
-              <span className="hub-stat__label">Data Practices</span>
-            </div>
-            <div className="hub-stat-divider" aria-hidden="true" />
-            <div className="hub-stat">
-              <span className="hub-stat__val">Multi</span>
-              <span className="hub-stat__label">Format Delivery</span>
-            </div>
-            <div className="hub-stat-divider" aria-hidden="true" />
-            <div className="hub-stat">
-              <span className="hub-stat__val">QA</span>
-              <span className="hub-stat__label">At Every Batch</span>
-            </div>
-          </div>
         </div>
       </section>
 

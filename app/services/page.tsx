@@ -59,23 +59,6 @@ export default function ServicesHubPage() {
               How we work
             </Link>
           </div>
-
-          <div className="hub-hero__stats">
-            <div className="hub-stat">
-              <span className="hub-stat__val">7</span>
-              <span className="hub-stat__label">Software Practices</span>
-            </div>
-            <div className="hub-stat-divider" aria-hidden="true" />
-            <div className="hub-stat">
-              <span className="hub-stat__val">100%</span>
-              <span className="hub-stat__label">Client Code Ownership</span>
-            </div>
-            <div className="hub-stat-divider" aria-hidden="true" />
-            <div className="hub-stat">
-              <span className="hub-stat__val">Full</span>
-              <span className="hub-stat__label">Source & IP Transfer</span>
-            </div>
-          </div>
         </div>
       </section>
 
