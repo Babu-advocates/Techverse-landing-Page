@@ -32,16 +32,54 @@ export default function ContactForm() {
     const payload = Object.fromEntries(data.entries());
 
     try {
-      const res = await fetch('/api/contact', {
+      let res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const json = await res.json();
-      if (!res.ok || !json.ok) {
+      let json = await res.json().catch(() => null);
+
+      // Client-side failover to direct FormSubmit if backend endpoint was unreachable
+      if (!res.ok || !json?.ok) {
+        try {
+          const directRes = await fetch('https://formsubmit.co/ajax/contact@techverseinfotech.com', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              _subject: `New Project Inquiry: ${payload.service || 'General'} — ${payload.fullName}`,
+              _template: 'table',
+              _captcha: 'false',
+              _replyto: payload.email,
+              'Full Name': payload.fullName,
+              'Company Name': payload.company || '—',
+              'Business Email': payload.email,
+              'Website URL': payload.websiteUrl || '—',
+              'Service Required': payload.service || 'General Inquiry',
+              'Currency': payload.currency || 'INR',
+              'Budget Range': payload.budget || 'Not specified',
+              'Project Requirements': payload.description,
+            }),
+          });
+          if (directRes.ok) {
+            json = {
+              ok: true,
+              message:
+                'Thank you. Your project inquiry has been received. Our technical team will review and reply within 24–48 hours.',
+            };
+            res = { ok: true } as any;
+          }
+        } catch {
+          // keep original response
+        }
+      }
+
+      if (!res.ok || !json?.ok) {
         setStatus({
           type: 'err',
-          message: json.error || 'Unable to send inquiry. Please try again or email us directly.',
+          message: json?.error || 'Unable to send inquiry. Please try again or email us directly.',
         });
       } else {
         setStatus({
@@ -57,9 +95,44 @@ export default function ContactForm() {
         setFormKey((k) => k + 1);
       }
     } catch {
+      // Direct FormSubmit fallback on network catch
+      try {
+        const directRes = await fetch('https://formsubmit.co/ajax/contact@techverseinfotech.com', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({
+            _subject: `New Project Inquiry: ${payload.service || 'General'} — ${payload.fullName}`,
+            _template: 'table',
+            _captcha: 'false',
+            _replyto: payload.email,
+            'Full Name': payload.fullName,
+            'Company Name': payload.company || '—',
+            'Business Email': payload.email,
+            'Website URL': payload.websiteUrl || '—',
+            'Service Required': payload.service || 'General Inquiry',
+            'Currency': payload.currency || 'INR',
+            'Budget Range': payload.budget || 'Not specified',
+            'Project Requirements': payload.description,
+          }),
+        });
+        if (directRes.ok) {
+          setStatus({
+            type: 'ok',
+            message:
+              'Thank you. Your project inquiry has been received. Our technical team will review and reply within 24–48 hours.',
+          });
+          form.reset();
+          setService('');
+          setCurrency('INR');
+          setBudget('');
+          setFormKey((k) => k + 1);
+          return;
+        }
+      } catch {}
+
       setStatus({
         type: 'err',
-        message: 'Network connection error. Please email contact@techverseinfotech.com directly.',
+        message: 'Network connection error. Please email contact@techverseinfotech.com directly or reach us via WhatsApp.',
       });
     } finally {
       setPending(false);
