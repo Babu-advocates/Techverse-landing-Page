@@ -2,26 +2,51 @@ import { Pool } from '@neondatabase/serverless';
 import fs from 'fs';
 import path from 'path';
 
-const connectionString = process.env.DATABASE_URL;
+// Helper to load .env.local if DATABASE_URL not set in env
+let connectionString = process.env.DATABASE_URL;
+
+if (!connectionString && fs.existsSync('.env.local')) {
+  const envContent = fs.readFileSync('.env.local', 'utf8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('DATABASE_URL=')) {
+      connectionString = trimmed.split('=')[1].replace(/^["']|["']$/g, '').trim();
+      break;
+    }
+  }
+}
 
 if (!connectionString) {
-  console.error('Error: DATABASE_URL environment variable is required to run migrations.');
+  console.error('Error: DATABASE_URL is required to run migrations.');
   process.exit(1);
 }
 
-async function runMigration() {
-  console.log('Connecting to Neon PostgreSQL with Pool...');
+async function runAllMigrations() {
+  console.log('Connecting to Neon PostgreSQL...');
   const pool = new Pool({ connectionString });
 
-  const migrationPath = path.resolve('./migrations/001_RDM_create_careers_and_recruitment_schema.sql');
-  const sqlContent = fs.readFileSync(migrationPath, 'utf8');
+  const migrationsDir = path.resolve('./migrations');
+  const files = fs
+    .readdirSync(migrationsDir)
+    .filter((f) => f.endsWith('.sql'))
+    .sort();
 
-  console.log('Applying migration 001_RDM_create_careers_and_recruitment_schema.sql...');
-  await pool.query(sqlContent);
+  console.log(`Found ${files.length} migration file(s):`, files);
 
-  console.log('Migration applied successfully!');
+  for (const file of files) {
+    const filePath = path.join(migrationsDir, file);
+    const sql = fs.readFileSync(filePath, 'utf8');
+    console.log(`Running migration: ${file}...`);
+    try {
+      await pool.query(sql);
+      console.log(`✓ Applied: ${file}`);
+    } catch (err) {
+      console.error(`✗ Error applying ${file}:`, err);
+      throw err;
+    }
+  }
 
-  // Verify tables
+  // Verify all public tables in database
   const { rows: tables } = await pool.query(`
     SELECT table_name 
     FROM information_schema.tables 
@@ -30,16 +55,11 @@ async function runMigration() {
   `);
   console.log('Public tables in database:', tables.map((t) => t.table_name));
 
-  const { rows: jobRows } = await pool.query('SELECT count(*) FROM jobs;');
-  console.log('Seed jobs count:', jobRows[0].count);
-
-  const { rows: adminRows } = await pool.query('SELECT count(*) FROM admin_users;');
-  console.log('Admin users count:', adminRows[0].count);
-
   await pool.end();
+  console.log('All migrations completed successfully!');
 }
 
-runMigration().catch((err) => {
+runAllMigrations().catch((err) => {
   console.error('Migration failed:', err);
   process.exit(1);
 });
