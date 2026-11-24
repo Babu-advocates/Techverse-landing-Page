@@ -88,6 +88,25 @@ export default function ContactPage() {
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#25D366' }} />
             WhatsApp: {SITE.phoneDisplay}
           </a>
+
+          <span
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              fontSize: '14px',
+              fontWeight: 600,
+              color: 'var(--p-ink)',
+              padding: '8px 16px',
+              borderRadius: '999px',
+              background: 'var(--p-panel-bg, #fff)',
+              border: '1px solid var(--p-border, rgba(0,0,0,0.08))',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            }}
+          >
+            <span style={{ opacity: 0.6 }}>📍</span>
+            {SITE.addressShort}
+          </span>
         </div>
       </PageHero>
 

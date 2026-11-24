@@ -64,6 +64,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     url: `${SITE.url}/`,
     email: SITE.email,
     telephone: SITE.phone,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Tenkasi',
+      addressRegion: 'Tamil Nadu',
+      addressCountry: 'India',
+    },
     description: SITE.tagline,
     sameAs: [SITE.url],
   };

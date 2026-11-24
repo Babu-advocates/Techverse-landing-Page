@@ -2,6 +2,8 @@ export const SITE = {
   name: 'Techverse Infotech',
   url: 'https://techverseinfotech.com',
   email: 'contact@techverseinfotech.com',
+  address: 'Tenkasi, Tamil Nadu, India',
+  addressShort: 'Tenkasi, Tamilnadu',
   phone: '+91 82483 29035',
   phoneRaw: '+918248329035',
   phoneDisplay: '82483 29035',

@@ -92,6 +92,9 @@ export default function Footer() {
             >
               WhatsApp: {SITE.phoneDisplay}
             </a>
+            <p style={{ margin: '10px 0 0', color: 'var(--p-inv-muted)', fontSize: 13, lineHeight: 1.5 }}>
+              {SITE.address}
+            </p>
           </div>
         </div>
 
@@ -99,7 +102,7 @@ export default function Footer() {
           <div>
             © {year} {SITE.name}
           </div>
-          <div>Photo stand-ins pending client photography.</div>
+          <div>{SITE.addressShort}</div>
         </div>
       </div>
     </footer>
